@@ -1,0 +1,17 @@
+#ifndef SCHEDULE_H
+#define SCHEDULE_H
+
+#include <string>
+#include <nlohmann/json.hpp>
+
+class Schedule {
+public:
+    static void printSchedule(const nlohmann::json& schedule, bool showTransfers);
+
+private:
+    static std::string transportTypeTranslation(const std::string& transportType);
+    static int calculateDuration(const std::string& departure, const std::string& arrival);
+    static std::string formatTime(const std::string& time);
+};
+
+#endif

@@ -26,6 +26,7 @@ FetchContent_MakeAvailable(nlohmann_json)
 add_executable(${PROJECT_NAME}
     main.cpp
     src/CacheManager.cpp
+    src/Schedule.cpp
     src/YandexScheduleAPI.cpp
 )
 
