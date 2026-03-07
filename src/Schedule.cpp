@@ -50,7 +50,7 @@ MaybePrice getMaybePrice(const nlohmann::json& segment) {
             }
         }
     } catch (const std::exception&) {
-        // Игнорируем ошибки парсинга цены
+        //Игнорируем ошибки парсинга цены
     }
     return std::monostate{};
 }

@@ -35,12 +35,12 @@ int main(int argc, char* argv[]) {
 
     bool showTransfers = (choice == 2);
 
-    // RAII: единственный владелец кэша — освобождение при выходе из main
+    //RAII: единственный владелец кэша — освобождение при выходе из main
     auto cache = std::make_unique<CacheManager>("scheduleCache.json");
     cache->removeOldEntries();
 
-    // RAII: разделяемый владелец API — можно передавать в другие компоненты при необходимости
-    auto api = std::make_shared<YandexScheduleAPI>(APIKey);
+    //RAII: разделяемый владелец API — можно передавать в другие компоненты при необходимости
+    std::shared_ptr<IScheduleAPI> api = std::make_shared<YandexScheduleAPI>(APIKey);
 
     try {
         std::string from;
