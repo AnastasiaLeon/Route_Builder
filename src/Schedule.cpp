@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <sstream>
 #include <ctime>
+#include <iomanip>
 
 #define COLOR_RESET   "\033[0m"
 #define COLOR_GREEN   "\033[32m"
@@ -11,6 +12,38 @@
 #define COLOR_CYAN    "\033[36m"
 #define TEXT_ITALIC   "\033[3m"
 #define TEXT_BOLD     "\033[1m"
+
+namespace {
+std::string getPriceString(const nlohmann::json& segment) {
+    try {
+        if (segment.contains("tickets_info") && segment["tickets_info"].is_object()) {
+            const auto& tickets = segment["tickets_info"];
+            if (tickets.contains("places") && tickets["places"].is_array() && !tickets["places"].empty()) {
+                const auto& place = tickets["places"][0];
+                if (place.contains("price") && place["price"].is_object()) {
+                    const auto& price = place["price"];
+                    int whole = price.value("whole", 0);
+                    int cents = price.value("cents", 0);
+                    std::string currency = price.value("currency", "");
+
+                    std::ostringstream oss;
+                    oss << whole;
+                    if (cents > 0) {
+                        oss << "." << std::setw(2) << std::setfill('0') << cents;
+                    }
+                    if (!currency.empty()) {
+                        oss << " " << currency;
+                    }
+                    return oss.str();
+                }
+            }
+        }
+    } catch (const std::exception&) {
+        // Игнорируем ошибки парсинга цены, просто не выводим стоимость
+    }
+    return "";
+}
+} // namespace
 
 std::string Schedule::transportTypeTranslation(const std::string& transportType) {
     static const std::unordered_map<std::string, std::string> transportTranslations = {
@@ -124,9 +157,14 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
                 std::string duration = std::to_string(segment.value("duration", 0) / 60) + " мин";
                 std::string fromTitle = segment.value("from", nlohmann::json::object()).value("title", "");
                 std::string toTitle = segment.value("to", nlohmann::json::object()).value("title", "");
+                std::string price = getPriceString(segment);
 
                 std::cout << COLOR_GREEN << TEXT_BOLD << "⬆️  Прямой маршрут: " << COLOR_RESET << COLOR_GREEN << transport << "\n";
-                std::cout << COLOR_RESET << TEXT_ITALIC << "   🕒 Отправление: " << COLOR_RESET << departure << TEXT_ITALIC << " | 🕓 Прибытие: " << COLOR_RESET << arrival << TEXT_ITALIC << " | ⏳ Длительность в пути: " << COLOR_RESET << duration << "\n";
+                std::cout << COLOR_RESET << TEXT_ITALIC << "   🕒 Отправление: " << COLOR_RESET << departure << TEXT_ITALIC << " | 🕓 Прибытие: " << COLOR_RESET << arrival << TEXT_ITALIC << " | ⏳ Длительность в пути: " << COLOR_RESET << duration;
+                if (!price.empty()) {
+                    std::cout << TEXT_ITALIC << " | 💰 Стоимость: " << COLOR_RESET << price;
+                }
+                std::cout << "\n";
                 std::cout << TEXT_ITALIC << "   🚩 Место отправления: " << COLOR_RESET << fromTitle << TEXT_ITALIC << " | 🏁 Место прибытия: " << COLOR_RESET << toTitle << "\n";
             } else { // С пересадкой
                 std::string departure = segment.value("departure", "");
@@ -136,9 +174,14 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
 
                 int totalDuration = calculateDuration(departure, arrival);
                 std::string totalDurationStr = std::to_string(totalDuration) + " мин";
+                std::string price = getPriceString(segment);
 
                 std::cout << COLOR_YELLOW << TEXT_BOLD << "🔄 Маршрут с пересадкой: " << COLOR_RESET << COLOR_YELLOW << fromTitle << " → " << toTitle << "\n";
-                std::cout << COLOR_RESET << TEXT_ITALIC << "   🕒 Отправление: " << COLOR_RESET << formatTime(departure) << TEXT_ITALIC << " | 🕓 Прибытие: " << COLOR_RESET << formatTime(arrival) << TEXT_ITALIC << " | ⏳ Длительность в пути: " << COLOR_RESET << totalDurationStr << "\n";
+                std::cout << COLOR_RESET << TEXT_ITALIC << "   🕒 Отправление: " << COLOR_RESET << formatTime(departure) << TEXT_ITALIC << " | 🕓 Прибытие: " << COLOR_RESET << formatTime(arrival) << TEXT_ITALIC << " | ⏳ Длительность в пути: " << COLOR_RESET << totalDurationStr;
+                if (!price.empty()) {
+                    std::cout << TEXT_ITALIC << " | 💰 Стоимость: " << COLOR_RESET << price;
+                }
+                std::cout << "\n";
 
                 if (segment.contains("details") && segment["details"].is_array()) {
                     int stage = 1;
