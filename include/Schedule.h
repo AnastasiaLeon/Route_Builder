@@ -3,6 +3,13 @@
 
 #include <string>
 #include <nlohmann/json.hpp>
+#include <stdexcept>
+
+class TimeParseException : public std::runtime_error {
+public:
+    explicit TimeParseException(const std::string& message)
+        : std::runtime_error(message) {}
+};
 
 class Schedule {
 public:

@@ -6,6 +6,13 @@
 #include <unordered_map>
 #include <chrono>
 #include <optional>
+#include <stdexcept>
+
+class CacheException : public std::runtime_error {
+public:
+    explicit CacheException(const std::string& message)
+        : std::runtime_error(message) {}
+};
 
 class CacheManager {
 private:
@@ -16,6 +23,7 @@ private:
 
     std::unordered_map<std::string, CacheEntry> memoryCache;  // Кэш в памяти
     std::string cacheFile;  // Файл для кэша на диске
+    static constexpr int CACHE_VALIDITY_HOURS = 24;  // Данные актуальны 24 часа
     bool isCacheEntryValid(const CacheEntry& entry) const;
 
 public:

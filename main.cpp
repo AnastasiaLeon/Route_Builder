@@ -35,36 +35,54 @@ int main(int argc, char* argv[]) {
 
     bool showTransfers = (choice == 2);
 
+    // RAII: единственный владелец кэша — освобождение при выходе из main
     auto cache = std::make_unique<CacheManager>("scheduleCache.json");
     cache->removeOldEntries();
 
+    // RAII: разделяемый владелец API — можно передавать в другие компоненты при необходимости
     auto api = std::make_shared<YandexScheduleAPI>(APIKey);
 
-    std::string from, to;
     try {
+        std::string from;
+        std::string to;
+
         from = api->getCityCode(fromCity);
         to = api->getCityCode(toCity);
-    } catch (const std::exception& e) {
-        std::cerr << "Ошибка: " << e.what() << std::endl;
-        return 1;
-    }
 
-    std::string cacheKey = from + "_" + to + "_" + date;
-    auto data = cache->getFromCache(cacheKey);
+        std::string cacheKey = from + "_" + to + "_" + date;
+        auto data = cache->getFromCache(cacheKey);
 
-    if (data.has_value()) {
-        std::cout << "Данные найдены в кэше:\n";
-        Schedule::printSchedule(*data, showTransfers);
-    } else {
-        try {
+        if (data.has_value()) {
+            std::cout << "Данные найдены в кэше:\n";
+            Schedule::printSchedule(*data, showTransfers);
+        } else {
             auto schedule = api->getSchedule(from, to, date);
             cache->setToCache(cacheKey, schedule);
             std::cout << "Данные полученные из Яндекс Расписания:\n";
             Schedule::printSchedule(schedule, showTransfers);
-        } catch (const std::exception& error) {
-            std::cerr << "Ошибка: " << error.what() << std::endl;
-            return 1;
         }
+    } catch (const CityNotFoundException& e) {
+        std::cerr << "Ошибка: " << e.what() << std::endl;
+        return 1;
+    } catch (const NetworkException& e) {
+        std::cerr << "Ошибка сети: " << e.what() << std::endl;
+        return 1;
+    } catch (const ApiException& e) {
+        std::cerr << "Ошибка API: " << e.what() << std::endl;
+        return 1;
+    } catch (const JsonParseException& e) {
+        std::cerr << "Ошибка данных от сервера: " << e.what() << std::endl;
+        return 1;
+    } catch (const CacheException& e) {
+        std::cerr << "Ошибка работы с кэшем: " << e.what() << std::endl;
+        return 1;
+    } catch (const TimeParseException& e) {
+        std::cerr << "Ошибка обработки времени: " << e.what() << std::endl;
+        return 1;
+    } catch (const std::exception& e) {
+        std::cerr << "Неизвестная ошибка: " << e.what() << std::endl;
+        return 1;
     }
+
     return 0;
 }

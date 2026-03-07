@@ -6,15 +6,17 @@
 #include <iomanip>
 #include <variant>
 
-#define COLOR_RESET   "\033[0m"
-#define COLOR_GREEN   "\033[32m"
-#define COLOR_YELLOW  "\033[33m"
-#define COLOR_BLUE    "\033[34m"
-#define COLOR_CYAN    "\033[36m"
-#define TEXT_ITALIC   "\033[3m"
-#define TEXT_BOLD     "\033[1m"
-
 namespace {
+
+constexpr const char* COLOR_RESET   = "\033[0m";
+constexpr const char* COLOR_GREEN   = "\033[32m";
+constexpr const char* COLOR_YELLOW  = "\033[33m";
+constexpr const char* COLOR_BLUE    = "\033[34m";
+constexpr const char* COLOR_CYAN    = "\033[36m";
+constexpr const char* TEXT_ITALIC   = "\033[3m";
+constexpr const char* TEXT_BOLD     = "\033[1m";
+constexpr int MINUTES_PER_HOUR = 60;
+constexpr int SECONDS_PER_MINUTE = 60;
 
 std::string formatCurrency(const std::string& code) {
     if (code == "RUB" || code == "RUR") return "₽";
@@ -76,8 +78,8 @@ std::string formatDurationMinutes(int minutes) {
     if (minutes <= 0) {
         return "0 мин";
     }
-    int hours = minutes / 60;
-    int mins = minutes % 60;
+    int hours = minutes / MINUTES_PER_HOUR;
+    int mins = minutes % MINUTES_PER_HOUR;
     std::ostringstream oss;
     if (hours > 0) {
         oss << hours << " ч";
@@ -116,18 +118,18 @@ int Schedule::calculateDuration(const std::string& departure, const std::string&
 
     ssDeparture >> std::get_time(&tmDeparture, "%Y-%m-%dT%H:%M:%S");
     if (ssDeparture.fail()) {
-        throw std::runtime_error("Ошибка парсинга времени отправления");
+        throw TimeParseException("Ошибка парсинга времени отправления");
     }
 
     ssArrival >> std::get_time(&tmArrival, "%Y-%m-%dT%H:%M:%S");
     if (ssArrival.fail()) {
-        throw std::runtime_error("Ошибка парсинга времени прибытия");
+        throw TimeParseException("Ошибка парсинга времени прибытия");
     }
 
     std::time_t timeDeparture = std::mktime(&tmDeparture);
     std::time_t timeArrival = std::mktime(&tmArrival);
 
-    double diff = std::difftime(timeArrival, timeDeparture) / 60.0;
+    double diff = std::difftime(timeArrival, timeDeparture) / SECONDS_PER_MINUTE;
     return static_cast<int>(diff);
 }
 
@@ -208,7 +210,7 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
 
                 std::string departure = formatTime(segment.value("departure", ""));
                 std::string arrival = formatTime(segment.value("arrival", ""));
-                int durationMinutes = segment.value("duration", 0) / 60;
+                int durationMinutes = segment.value("duration", 0) / SECONDS_PER_MINUTE;
                 std::string duration = formatDurationMinutes(durationMinutes);
                 std::string fromTitle = segment.value("from", nlohmann::json::object()).value("title", "");
                 std::string toTitle = segment.value("to", nlohmann::json::object()).value("title", "");
@@ -244,7 +246,7 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
                         if (detail.contains("is_transfer") && detail["is_transfer"].get<bool>()) {
                             std::string transferFrom = detail.value("transfer_from", nlohmann::json::object()).value("title", "");
                             std::string transferTo = detail.value("transfer_to", nlohmann::json::object()).value("title", "");
-                            int transferMinutes = detail.value("duration", 0) / 60;
+                            int transferMinutes = detail.value("duration", 0) / SECONDS_PER_MINUTE;
                             std::string transferDuration = formatDurationMinutes(transferMinutes);
 
                             std::string transferTransport = "";

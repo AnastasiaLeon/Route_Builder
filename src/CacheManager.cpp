@@ -27,6 +27,7 @@ void CacheManager::setToCache(const std::string& key, const nlohmann::json& valu
 }
 
 void CacheManager::saveToFile() {
+    // RAII: ofstream закрывается в деструкторе при выходе из области видимости
     std::ofstream file(cacheFile);
     if (file) {
         nlohmann::json cacheJson;
@@ -39,10 +40,12 @@ void CacheManager::saveToFile() {
         file << cacheJson.dump(4);  // Сохранение кэша в формате json
     } else {
         std::cerr << "Ошибка: Не удалось открыть файл для записи кэша." << std::endl;
+        throw CacheException("Не удалось открыть файл для записи кэша: " + cacheFile);
     }
 }
 
 void CacheManager::loadFromFile() {
+    // RAII: ifstream закрывается в деструкторе при выходе из области видимости
     std::ifstream file(cacheFile);
     if (file) {
         nlohmann::json cacheJson;
@@ -56,9 +59,10 @@ void CacheManager::loadFromFile() {
             }
         } catch (const std::exception& error) {
             std::cerr << "Ошибка при загрузке кэша: " << error.what() << std::endl;
+            throw CacheException("Ошибка при загрузке кэша: " + std::string(error.what()));
         }
     } else {
-        std::cerr << "Ошибка: Не удалось открыть файл для чтения кэша." << std::endl;
+        // Отсутствие файла кэша не считается ошибкой — он будет создан при первой записи
     }
 }
 
@@ -82,5 +86,5 @@ void CacheManager::removeOldEntries() {
 bool CacheManager::isCacheEntryValid(const CacheEntry& entry) const {
     auto now = std::chrono::system_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::hours>(now - entry.timestamp);
-    return duration.count() < 24;  // Данные актуальны 24 часа
+    return duration.count() < CACHE_VALIDITY_HOURS;
 }
