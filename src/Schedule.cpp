@@ -14,6 +14,14 @@
 #define TEXT_BOLD     "\033[1m"
 
 namespace {
+
+std::string formatCurrency(const std::string& code) {
+    if (code == "RUB" || code == "RUR") return "₽";
+    if (code == "EUR") return "€";
+    if (code == "USD") return "$";
+    return code;
+}
+
 std::string getPriceString(const nlohmann::json& segment) {
     try {
         if (segment.contains("tickets_info") && segment["tickets_info"].is_object()) {
@@ -24,15 +32,15 @@ std::string getPriceString(const nlohmann::json& segment) {
                     const auto& price = place["price"];
                     int whole = price.value("whole", 0);
                     int cents = price.value("cents", 0);
-                    std::string currency = price.value("currency", "");
+                    std::string currencyCode = price.value("currency", "");
 
                     std::ostringstream oss;
                     oss << whole;
                     if (cents > 0) {
                         oss << "." << std::setw(2) << std::setfill('0') << cents;
                     }
-                    if (!currency.empty()) {
-                        oss << " " << currency;
+                    if (!currencyCode.empty()) {
+                        oss << " " << formatCurrency(currencyCode);
                     }
                     return oss.str();
                 }
@@ -43,7 +51,26 @@ std::string getPriceString(const nlohmann::json& segment) {
     }
     return "";
 }
-} // namespace
+
+std::string formatDurationMinutes(int minutes) {
+    if (minutes <= 0) {
+        return "0 мин";
+    }
+    int hours = minutes / 60;
+    int mins = minutes % 60;
+    std::ostringstream oss;
+    if (hours > 0) {
+        oss << hours << " ч";
+        if (mins > 0) {
+            oss << " " << mins << " мин";
+        }
+    } else {
+        oss << mins << " мин";
+    }
+    return oss.str();
+}
+
+}
 
 std::string Schedule::transportTypeTranslation(const std::string& transportType) {
     static const std::unordered_map<std::string, std::string> transportTranslations = {
@@ -90,6 +117,13 @@ std::string Schedule::formatTime(const std::string& time) {
     if (tPos != std::string::npos) {
         formattedTime.replace(tPos, 1, " ");
     }
+    // Удаляем информацию о временной зоне (+03:00 / -05:00 и т.п.)
+    size_t searchStart = (tPos != std::string::npos) ? tPos : 0;
+    size_t tzPos = formattedTime.find_first_of("+-", searchStart);
+    if (tzPos != std::string::npos) {
+        formattedTime = formattedTime.substr(0, tzPos);
+    }
+    formattedTime += " МСК";
     return formattedTime;
 }
 
@@ -154,7 +188,8 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
 
                 std::string departure = formatTime(segment.value("departure", ""));
                 std::string arrival = formatTime(segment.value("arrival", ""));
-                std::string duration = std::to_string(segment.value("duration", 0) / 60) + " мин";
+                int durationMinutes = segment.value("duration", 0) / 60;
+                std::string duration = formatDurationMinutes(durationMinutes);
                 std::string fromTitle = segment.value("from", nlohmann::json::object()).value("title", "");
                 std::string toTitle = segment.value("to", nlohmann::json::object()).value("title", "");
                 std::string price = getPriceString(segment);
@@ -173,7 +208,7 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
                 std::string toTitle = segment.value("arrival_to", nlohmann::json::object()).value("title", "");
 
                 int totalDuration = calculateDuration(departure, arrival);
-                std::string totalDurationStr = std::to_string(totalDuration) + " мин";
+                std::string totalDurationStr = formatDurationMinutes(totalDuration);
                 std::string price = getPriceString(segment);
 
                 std::cout << COLOR_YELLOW << TEXT_BOLD << "🔄 Маршрут с пересадкой: " << COLOR_RESET << COLOR_YELLOW << fromTitle << " → " << toTitle << "\n";
@@ -189,7 +224,8 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
                         if (detail.contains("is_transfer") && detail["is_transfer"].get<bool>()) {
                             std::string transferFrom = detail.value("transfer_from", nlohmann::json::object()).value("title", "");
                             std::string transferTo = detail.value("transfer_to", nlohmann::json::object()).value("title", "");
-                            std::string transferDuration = std::to_string(detail.value("duration", 0) / 60) + " мин";
+                            int transferMinutes = detail.value("duration", 0) / 60;
+                            std::string transferDuration = formatDurationMinutes(transferMinutes);
 
                             std::string transferTransport = "";
                             if (detail.contains("thread") && detail["thread"].contains("transport_type")) {
