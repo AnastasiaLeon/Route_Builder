@@ -10,6 +10,7 @@ private:
 
 public:
     YandexScheduleAPI(const std::string& key);
+    std::string getCityCode(const std::string& cityName);
     nlohmann::json getSchedule(const std::string& from, const std::string& to, const std::string& date);
 };
 
