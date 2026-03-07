@@ -4,6 +4,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <string>
+#include <memory>
 
 int main(int argc, char* argv[]) {
     std::cout << "Введите API-ключ: ";
@@ -34,30 +35,30 @@ int main(int argc, char* argv[]) {
 
     bool showTransfers = (choice == 2);
 
-    CacheManager cache("scheduleCache.json");
-    cache.removeOldEntries();
+    auto cache = std::make_unique<CacheManager>("scheduleCache.json");
+    cache->removeOldEntries();
 
-    YandexScheduleAPI api(APIKey);
+    auto api = std::make_shared<YandexScheduleAPI>(APIKey);
 
     std::string from, to;
     try {
-        from = api.getCityCode(fromCity);
-        to = api.getCityCode(toCity);
+        from = api->getCityCode(fromCity);
+        to = api->getCityCode(toCity);
     } catch (const std::exception& e) {
         std::cerr << "Ошибка: " << e.what() << std::endl;
         return 1;
     }
 
     std::string cacheKey = from + "_" + to + "_" + date;
-    nlohmann::json data = cache.getFromCache(cacheKey);
+    auto data = cache->getFromCache(cacheKey);
 
-    if (data != nullptr) {
+    if (data.has_value()) {
         std::cout << "Данные найдены в кэше:\n";
-        Schedule::printSchedule(data, showTransfers);
+        Schedule::printSchedule(*data, showTransfers);
     } else {
         try {
-            auto schedule = api.getSchedule(from, to, date);
-            cache.setToCache(cacheKey, schedule);
+            auto schedule = api->getSchedule(from, to, date);
+            cache->setToCache(cacheKey, schedule);
             std::cout << "Данные полученные из Яндекс Расписания:\n";
             Schedule::printSchedule(schedule, showTransfers);
         } catch (const std::exception& error) {

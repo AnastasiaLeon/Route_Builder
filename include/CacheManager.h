@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 #include <chrono>
+#include <optional>
 
 class CacheManager {
 private:
@@ -19,7 +20,7 @@ private:
 
 public:
     CacheManager(const std::string& file);
-    nlohmann::json getFromCache(const std::string& key);
+    std::optional<nlohmann::json> getFromCache(const std::string& key);
     void setToCache(const std::string& key, const nlohmann::json& value);  // Сохранить данные в кэше
     void saveToFile();
     void loadFromFile();

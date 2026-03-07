@@ -4,6 +4,7 @@
 #include <sstream>
 #include <ctime>
 #include <iomanip>
+#include <variant>
 
 #define COLOR_RESET   "\033[0m"
 #define COLOR_GREEN   "\033[32m"
@@ -22,7 +23,15 @@ std::string formatCurrency(const std::string& code) {
     return code;
 }
 
-std::string getPriceString(const nlohmann::json& segment) {
+struct PriceInfo {
+    int whole = 0;
+    int cents = 0;
+    std::string currencyCode;
+};
+
+using MaybePrice = std::variant<std::monostate, PriceInfo>;
+
+MaybePrice getMaybePrice(const nlohmann::json& segment) {
     try {
         if (segment.contains("tickets_info") && segment["tickets_info"].is_object()) {
             const auto& tickets = segment["tickets_info"];
@@ -30,26 +39,37 @@ std::string getPriceString(const nlohmann::json& segment) {
                 const auto& place = tickets["places"][0];
                 if (place.contains("price") && place["price"].is_object()) {
                     const auto& price = place["price"];
-                    int whole = price.value("whole", 0);
-                    int cents = price.value("cents", 0);
-                    std::string currencyCode = price.value("currency", "");
-
-                    std::ostringstream oss;
-                    oss << whole;
-                    if (cents > 0) {
-                        oss << "." << std::setw(2) << std::setfill('0') << cents;
-                    }
-                    if (!currencyCode.empty()) {
-                        oss << " " << formatCurrency(currencyCode);
-                    }
-                    return oss.str();
+                    PriceInfo info;
+                    info.whole = price.value("whole", 0);
+                    info.cents = price.value("cents", 0);
+                    info.currencyCode = price.value("currency", "");
+                    return info;
                 }
             }
         }
     } catch (const std::exception&) {
-        // Игнорируем ошибки парсинга цены, просто не выводим стоимость
+        // Игнорируем ошибки парсинга цены
     }
-    return "";
+    return std::monostate{};
+}
+
+struct PriceToStringVisitor {
+    std::string operator()(std::monostate) const { return ""; }
+    std::string operator()(const PriceInfo& p) const {
+        std::ostringstream oss;
+        oss << p.whole;
+        if (p.cents > 0) {
+            oss << "." << std::setw(2) << std::setfill('0') << p.cents;
+        }
+        if (!p.currencyCode.empty()) {
+            oss << " " << formatCurrency(p.currencyCode);
+        }
+        return oss.str();
+    }
+};
+
+std::string priceVariantToString(MaybePrice maybePrice) {
+    return std::visit(PriceToStringVisitor{}, maybePrice);
 }
 
 std::string formatDurationMinutes(int minutes) {
@@ -192,7 +212,7 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
                 std::string duration = formatDurationMinutes(durationMinutes);
                 std::string fromTitle = segment.value("from", nlohmann::json::object()).value("title", "");
                 std::string toTitle = segment.value("to", nlohmann::json::object()).value("title", "");
-                std::string price = getPriceString(segment);
+                std::string price = priceVariantToString(getMaybePrice(segment));
 
                 std::cout << COLOR_GREEN << TEXT_BOLD << "⬆️  Прямой маршрут: " << COLOR_RESET << COLOR_GREEN << transport << "\n";
                 std::cout << COLOR_RESET << TEXT_ITALIC << "   🕒 Отправление: " << COLOR_RESET << departure << TEXT_ITALIC << " | 🕓 Прибытие: " << COLOR_RESET << arrival << TEXT_ITALIC << " | ⏳ Длительность в пути: " << COLOR_RESET << duration;
@@ -209,7 +229,7 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
 
                 int totalDuration = calculateDuration(departure, arrival);
                 std::string totalDurationStr = formatDurationMinutes(totalDuration);
-                std::string price = getPriceString(segment);
+                std::string price = priceVariantToString(getMaybePrice(segment));
 
                 std::cout << COLOR_YELLOW << TEXT_BOLD << "🔄 Маршрут с пересадкой: " << COLOR_RESET << COLOR_YELLOW << fromTitle << " → " << toTitle << "\n";
                 std::cout << COLOR_RESET << TEXT_ITALIC << "   🕒 Отправление: " << COLOR_RESET << formatTime(departure) << TEXT_ITALIC << " | 🕓 Прибытие: " << COLOR_RESET << formatTime(arrival) << TEXT_ITALIC << " | ⏳ Длительность в пути: " << COLOR_RESET << totalDurationStr;

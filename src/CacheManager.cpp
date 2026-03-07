@@ -6,7 +6,7 @@ CacheManager::CacheManager(const std::string& file) : cacheFile(file) {
     loadFromFile();
 }
 
-nlohmann::json CacheManager::getFromCache(const std::string& key) {
+std::optional<nlohmann::json> CacheManager::getFromCache(const std::string& key) {
     if (memoryCache.find(key) != memoryCache.end()) {
         CacheEntry& entry = memoryCache[key];
         if (isCacheEntryValid(entry)) {
@@ -15,7 +15,7 @@ nlohmann::json CacheManager::getFromCache(const std::string& key) {
             memoryCache.erase(key);  // Если неактуальны -> удаляем
         }
     }
-    return nullptr;
+    return std::nullopt;
 }
 
 void CacheManager::setToCache(const std::string& key, const nlohmann::json& value) {
