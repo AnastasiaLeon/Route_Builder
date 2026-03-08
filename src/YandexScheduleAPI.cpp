@@ -18,21 +18,21 @@ std::string YandexScheduleAPI::getCityCode(const std::string& cityName) {
     );
 
     if (response.error) {
-        throw std::runtime_error("Ошибка сети при поиске города: " + response.error.message);
+        throw NetworkException("Ошибка сети при поиске города: " + response.error.message);
     }
 
     if (response.status_code != 200) {
-        throw std::runtime_error("Ошибка запроса к подсказкам (" + std::to_string(response.status_code) + ")");
+        throw ApiException("Ошибка запроса к подсказкам (" + std::to_string(response.status_code) + ")");
     }
 
     try {
         auto json = nlohmann::json::parse(response.text);
         if (!json.contains("items") || !json["items"].is_array() || json["items"].empty()) {
-            throw std::runtime_error("Город не найден: " + cityName);
+            throw CityNotFoundException(cityName);
         }
         return json["items"][0]["point_key"].get<std::string>();
-    } catch (const nlohmann::json::exception& e) {
-        throw std::runtime_error("Город не найден: " + cityName);
+    } catch (const nlohmann::json::exception&) {
+        throw CityNotFoundException(cityName);
     }
 }
 
@@ -52,16 +52,16 @@ nlohmann::json YandexScheduleAPI::getSchedule(const std::string& from, const std
     );
 
     if (response.error) {
-        throw std::runtime_error("Ошибка сети: " + response.error.message);
+        throw NetworkException("Ошибка сети: " + response.error.message);
     }
 
     if (response.status_code != 200) {
-        throw std::runtime_error("Ошибка запроса (" + std::to_string(response.status_code) + "): " + response.text);
+        throw ApiException("Ошибка запроса (" + std::to_string(response.status_code) + "): " + response.text);
     }
 
     try {
         return nlohmann::json::parse(response.text);
     } catch (const std::exception& error) {
-        throw std::runtime_error("Ошибка парсинга JSON: " + std::string(error.what()));
+        throw JsonParseException("Ошибка парсинга JSON: " + std::string(error.what()));
     }
 }
