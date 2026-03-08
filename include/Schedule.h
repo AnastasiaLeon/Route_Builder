@@ -13,11 +13,11 @@ public:
 class Schedule {
 public:
     static void printSchedule(const nlohmann::json& schedule, bool showTransfers);
+    static int calculateDuration(const std::string& departure, const std::string& arrival);
+    static std::string formatTime(const std::string& time);
 
 private:
     static std::string transportTypeTranslation(const std::string& transportType);
-    static int calculateDuration(const std::string& departure, const std::string& arrival);
-    static std::string formatTime(const std::string& time);
 };
 
 #endif
