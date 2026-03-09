@@ -25,6 +25,7 @@ public:
     QWidget *sidePanel;
     QLabel *logoLabel;
     QLabel *paramsLabel;
+    QLabel *toLabel;
     QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -58,6 +59,13 @@ public:
 "font-weight: 700;\n"
 "background: transparent;\n"
 "letter-spacing: 1px;"));
+        toLabel = new QLabel(centralwidget);
+        toLabel->setObjectName("toLabel");
+        toLabel->setGeometry(QRect(20, 155, 100, 16));
+        toLabel->setStyleSheet(QString::fromUtf8("color: #3e4560;\n"
+"font-size: 10px;\n"
+"font-weight: 700;\n"
+"background: transparent;"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -74,6 +82,7 @@ public:
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         logoLabel->setText(QCoreApplication::translate("MainWindow", "\360\237\227\272 RouteBuilder", nullptr));
         paramsLabel->setText(QCoreApplication::translate("MainWindow", "\320\237\320\220\320\240\320\220\320\234\320\225\320\242\320\240\320\253 \320\234\320\220\320\240\320\250\320\240\320\243\320\242\320\220", nullptr));
+        toLabel->setText(QCoreApplication::translate("MainWindow", "\320\232\320\243\320\224\320\220", nullptr));
     } // retranslateUi
 
 };

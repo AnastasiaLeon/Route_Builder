@@ -73,6 +73,25 @@ letter-spacing: 1px;</string>
      <string>ПАРАМЕТРЫ МАРШРУТА</string>
     </property>
    </widget>
+   <widget class="QLabel" name="toLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>155</y>
+      <width>100</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #3e4560;
+font-size: 10px;
+font-weight: 700;
+background: transparent;</string>
+    </property>
+    <property name="text">
+     <string>КУДА</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
