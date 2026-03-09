@@ -12,6 +12,7 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QWidget>
@@ -26,6 +27,9 @@ public:
     QLabel *logoLabel;
     QLabel *paramsLabel;
     QLabel *toLabel;
+    QLabel *fromLabel;
+    QLineEdit *fromInput;
+    QLineEdit *toInput;
     QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -61,11 +65,50 @@ public:
 "letter-spacing: 1px;"));
         toLabel = new QLabel(centralwidget);
         toLabel->setObjectName("toLabel");
-        toLabel->setGeometry(QRect(20, 155, 100, 16));
+        toLabel->setGeometry(QRect(20, 158, 100, 16));
         toLabel->setStyleSheet(QString::fromUtf8("color: #3e4560;\n"
 "font-size: 10px;\n"
 "font-weight: 700;\n"
 "background: transparent;"));
+        fromLabel = new QLabel(centralwidget);
+        fromLabel->setObjectName("fromLabel");
+        fromLabel->setGeometry(QRect(20, 88, 100, 14));
+        fromLabel->setStyleSheet(QString::fromUtf8("color: #3e4560;\n"
+"font-size: 10px;\n"
+"font-weight: 700;\n"
+"background: transparent;"));
+        fromInput = new QLineEdit(centralwidget);
+        fromInput->setObjectName("fromInput");
+        fromInput->setGeometry(QRect(20, 104, 460, 40));
+        fromInput->setStyleSheet(QString::fromUtf8("QLineEdit {\n"
+"    background-color: #121620;\n"
+"    color: #dde3f0;\n"
+"    border: 1.5px solid #1e2438;\n"
+"    border-radius: 8px;\n"
+"    padding: 8px 12px;\n"
+"    font-size: 14px;\n"
+"    font-weight: 600;\n"
+"}\n"
+"QLineEdit:focus {\n"
+"    border: 1.5px solid #3d7bff;\n"
+"    background-color: #181d2a;\n"
+"}"));
+        toInput = new QLineEdit(centralwidget);
+        toInput->setObjectName("toInput");
+        toInput->setGeometry(QRect(20, 174, 460, 40));
+        toInput->setStyleSheet(QString::fromUtf8("QLineEdit {\n"
+"    background-color: #121620;\n"
+"    color: #dde3f0;\n"
+"    border: 1.5px solid #1e2438;\n"
+"    border-radius: 8px;\n"
+"    padding: 8px 12px;\n"
+"    font-size: 14px;\n"
+"    font-weight: 600;\n"
+"}\n"
+"QLineEdit:focus {\n"
+"    border: 1.5px solid #3d7bff;\n"
+"    background-color: #181d2a;\n"
+"}"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -83,6 +126,9 @@ public:
         logoLabel->setText(QCoreApplication::translate("MainWindow", "\360\237\227\272 RouteBuilder", nullptr));
         paramsLabel->setText(QCoreApplication::translate("MainWindow", "\320\237\320\220\320\240\320\220\320\234\320\225\320\242\320\240\320\253 \320\234\320\220\320\240\320\250\320\240\320\243\320\242\320\220", nullptr));
         toLabel->setText(QCoreApplication::translate("MainWindow", "\320\232\320\243\320\224\320\220", nullptr));
+        fromLabel->setText(QCoreApplication::translate("MainWindow", "\320\236\320\242\320\232\320\243\320\224\320\220", nullptr));
+        fromInput->setPlaceholderText(QCoreApplication::translate("MainWindow", "\320\223\320\276\321\200\320\276\320\264 \320\276\321\202\320\277\321\200\320\260\320\262\320\273\320\265\320\275\320\270\321\217...", nullptr));
+        toInput->setPlaceholderText(QCoreApplication::translate("MainWindow", "\320\223\320\276\321\200\320\276\320\264 \320\277\321\200\320\270\320\261\321\213\321\202\320\270\321\217...", nullptr));
     } // retranslateUi
 
 };
