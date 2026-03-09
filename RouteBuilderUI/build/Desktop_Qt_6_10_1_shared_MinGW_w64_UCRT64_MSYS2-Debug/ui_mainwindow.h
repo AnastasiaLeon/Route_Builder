@@ -16,6 +16,7 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -34,6 +35,8 @@ public:
     QLabel *dateLabel;
     QDateEdit *dateEdit;
     QLabel *routeTypeLabel;
+    QPushButton *directBtn;
+    QPushButton *allRoutesBtn;
     QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -147,6 +150,37 @@ public:
 "font-size: 10px;\n"
 "font-weight: 700;\n"
 "background: transparent;"));
+        directBtn = new QPushButton(centralwidget);
+        directBtn->setObjectName("directBtn");
+        directBtn->setGeometry(QRect(20, 330, 222, 55));
+        directBtn->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: rgba(61,123,255,0.08);\n"
+"    color: #dde3f0;\n"
+"    border: 1.5px solid #3d7bff;\n"
+"    border-radius: 8px;\n"
+"    font-size: 13px;\n"
+"    font-weight: 700;\n"
+"    padding: 8px;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(61,123,255,0.18);\n"
+"}"));
+        allRoutesBtn = new QPushButton(centralwidget);
+        allRoutesBtn->setObjectName("allRoutesBtn");
+        allRoutesBtn->setGeometry(QRect(252, 330, 228, 55));
+        allRoutesBtn->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: #121620;\n"
+"    color: #7c859e;\n"
+"    border: 1.5px solid #1e2438;\n"
+"    border-radius: 8px;\n"
+"    font-size: 13px;\n"
+"    font-weight: 700;\n"
+"    padding: 8px;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    border: 1.5px solid #3d7bff;\n"
+"    color: #dde3f0;\n"
+"}"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -169,6 +203,10 @@ public:
         toInput->setPlaceholderText(QCoreApplication::translate("MainWindow", "\320\223\320\276\321\200\320\276\320\264 \320\277\321\200\320\270\320\261\321\213\321\202\320\270\321\217...", nullptr));
         dateLabel->setText(QCoreApplication::translate("MainWindow", "\320\224\320\220\320\242\320\220", nullptr));
         routeTypeLabel->setText(QCoreApplication::translate("MainWindow", "\320\242\320\230\320\237 \320\234\320\220\320\240\320\250\320\240\320\243\320\242\320\236\320\222", nullptr));
+        directBtn->setText(QCoreApplication::translate("MainWindow", "\320\237\321\200\321\217\320\274\321\213\320\265\n"
+"\320\221\320\265\320\267 \320\277\320\265\321\200\320\265\321\201\320\260\320\264\320\276\320\272", nullptr));
+        allRoutesBtn->setText(QCoreApplication::translate("MainWindow", "\320\222\321\201\320\265 \320\274\320\260\321\200\321\210\321\200\321\203\321\202\321\213\n"
+"+ \321\201 \320\277\320\265\321\200\320\265\321\201\320\260\320\264\320\272\320\260\320\274\320\270", nullptr));
     } // retranslateUi
 
 };
