@@ -17,5 +17,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    void setDirectActive(bool directActive);
 };
-#endif // MAINWINDOW_H
+
+#endif
