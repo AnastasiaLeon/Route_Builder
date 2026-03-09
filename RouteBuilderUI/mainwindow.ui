@@ -291,6 +291,35 @@ QPushButton:hover {
 + с пересадками</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="searchBtn">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>400</y>
+      <width>460</width>
+      <height>45</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: #3d7bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+}
+QPushButton:hover {
+    background-color: #2a5fd4;
+}
+QPushButton:pressed {
+    background-color: #1e4ab0;
+}</string>
+    </property>
+    <property name="text">
+     <string>Найти маршруты →</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

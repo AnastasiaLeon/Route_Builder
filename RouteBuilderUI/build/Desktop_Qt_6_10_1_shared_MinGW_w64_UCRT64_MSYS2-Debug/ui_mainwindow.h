@@ -37,6 +37,7 @@ public:
     QLabel *routeTypeLabel;
     QPushButton *directBtn;
     QPushButton *allRoutesBtn;
+    QPushButton *searchBtn;
     QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -181,6 +182,23 @@ public:
 "    border: 1.5px solid #3d7bff;\n"
 "    color: #dde3f0;\n"
 "}"));
+        searchBtn = new QPushButton(centralwidget);
+        searchBtn->setObjectName("searchBtn");
+        searchBtn->setGeometry(QRect(20, 400, 460, 45));
+        searchBtn->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: #3d7bff;\n"
+"    color: white;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    font-size: 14px;\n"
+"    font-weight: 700;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #2a5fd4;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #1e4ab0;\n"
+"}"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -207,6 +225,7 @@ public:
 "\320\221\320\265\320\267 \320\277\320\265\321\200\320\265\321\201\320\260\320\264\320\276\320\272", nullptr));
         allRoutesBtn->setText(QCoreApplication::translate("MainWindow", "\320\222\321\201\320\265 \320\274\320\260\321\200\321\210\321\200\321\203\321\202\321\213\n"
 "+ \321\201 \320\277\320\265\321\200\320\265\321\201\320\260\320\264\320\272\320\260\320\274\320\270", nullptr));
+        searchBtn->setText(QCoreApplication::translate("MainWindow", "\320\235\320\260\320\271\321\202\320\270 \320\274\320\260\321\200\321\210\321\200\321\203\321\202\321\213 \342\206\222", nullptr));
     } // retranslateUi
 
 };
