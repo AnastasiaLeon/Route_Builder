@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QDateEdit>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
@@ -30,6 +31,8 @@ public:
     QLabel *fromLabel;
     QLineEdit *fromInput;
     QLineEdit *toInput;
+    QLabel *dateLabel;
+    QDateEdit *dateEdit;
     QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -109,6 +112,33 @@ public:
 "    border: 1.5px solid #3d7bff;\n"
 "    background-color: #181d2a;\n"
 "}"));
+        dateLabel = new QLabel(centralwidget);
+        dateLabel->setObjectName("dateLabel");
+        dateLabel->setGeometry(QRect(20, 240, 100, 14));
+        dateLabel->setStyleSheet(QString::fromUtf8("color: #3e4560;\n"
+"font-size: 10px;\n"
+"font-weight: 700;\n"
+"background: transparent;"));
+        dateEdit = new QDateEdit(centralwidget);
+        dateEdit->setObjectName("dateEdit");
+        dateEdit->setGeometry(QRect(20, 258, 460, 40));
+        dateEdit->setStyleSheet(QString::fromUtf8("QDateEdit {\n"
+"    background-color: #121620;\n"
+"    color: #dde3f0;\n"
+"    border: 1.5px solid #1e2438;\n"
+"    border-radius: 8px;\n"
+"    padding: 8px 12px;\n"
+"    font-size: 14px;\n"
+"    font-weight: 600;\n"
+"}\n"
+"QDateEdit:focus {\n"
+"    border: 1.5px solid #3d7bff;\n"
+"}\n"
+"QDateEdit::drop-down {\n"
+"    border: none;\n"
+"    background: transparent;\n"
+"    width: 20px;\n"
+"}"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -129,6 +159,7 @@ public:
         fromLabel->setText(QCoreApplication::translate("MainWindow", "\320\236\320\242\320\232\320\243\320\224\320\220", nullptr));
         fromInput->setPlaceholderText(QCoreApplication::translate("MainWindow", "\320\223\320\276\321\200\320\276\320\264 \320\276\321\202\320\277\321\200\320\260\320\262\320\273\320\265\320\275\320\270\321\217...", nullptr));
         toInput->setPlaceholderText(QCoreApplication::translate("MainWindow", "\320\223\320\276\321\200\320\276\320\264 \320\277\321\200\320\270\320\261\321\213\321\202\320\270\321\217...", nullptr));
+        dateLabel->setText(QCoreApplication::translate("MainWindow", "\320\224\320\220\320\242\320\220", nullptr));
     } // retranslateUi
 
 };
