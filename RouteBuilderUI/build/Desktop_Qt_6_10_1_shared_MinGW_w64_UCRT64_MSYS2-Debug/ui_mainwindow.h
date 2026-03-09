@@ -33,6 +33,7 @@ public:
     QLineEdit *toInput;
     QLabel *dateLabel;
     QDateEdit *dateEdit;
+    QLabel *routeTypeLabel;
     QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -139,6 +140,13 @@ public:
 "    background: transparent;\n"
 "    width: 20px;\n"
 "}"));
+        routeTypeLabel = new QLabel(centralwidget);
+        routeTypeLabel->setObjectName("routeTypeLabel");
+        routeTypeLabel->setGeometry(QRect(20, 312, 200, 14));
+        routeTypeLabel->setStyleSheet(QString::fromUtf8("color: #3e4560;\n"
+"font-size: 10px;\n"
+"font-weight: 700;\n"
+"background: transparent;"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -160,6 +168,7 @@ public:
         fromInput->setPlaceholderText(QCoreApplication::translate("MainWindow", "\320\223\320\276\321\200\320\276\320\264 \320\276\321\202\320\277\321\200\320\260\320\262\320\273\320\265\320\275\320\270\321\217...", nullptr));
         toInput->setPlaceholderText(QCoreApplication::translate("MainWindow", "\320\223\320\276\321\200\320\276\320\264 \320\277\321\200\320\270\320\261\321\213\321\202\320\270\321\217...", nullptr));
         dateLabel->setText(QCoreApplication::translate("MainWindow", "\320\224\320\220\320\242\320\220", nullptr));
+        routeTypeLabel->setText(QCoreApplication::translate("MainWindow", "\320\242\320\230\320\237 \320\234\320\220\320\240\320\250\320\240\320\243\320\242\320\236\320\222", nullptr));
     } // retranslateUi
 
 };

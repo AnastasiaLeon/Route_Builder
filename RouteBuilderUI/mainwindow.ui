@@ -215,6 +215,25 @@ QDateEdit::drop-down {
 }</string>
     </property>
    </widget>
+   <widget class="QLabel" name="routeTypeLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>312</y>
+      <width>200</width>
+      <height>14</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #3e4560;
+font-size: 10px;
+font-weight: 700;
+background: transparent;</string>
+    </property>
+    <property name="text">
+     <string>ТИП МАРШРУТОВ</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
