@@ -53,6 +53,26 @@ background: transparent;</string>
      <string>🗺 RouteBuilder</string>
     </property>
    </widget>
+   <widget class="QLabel" name="paramsLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>55</y>
+      <width>250</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #3e4560;
+font-size: 10px;
+font-weight: 700;
+background: transparent;
+letter-spacing: 1px;</string>
+    </property>
+    <property name="text">
+     <string>ПАРАМЕТРЫ МАРШРУТА</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
