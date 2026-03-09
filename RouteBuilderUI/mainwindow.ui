@@ -374,7 +374,7 @@ QListWidget::item:hover {
    <widget class="QWidget" name="rightPanel" native="true">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>510</x>
       <y>0</y>
       <width>960</width>
       <height>900</height>
@@ -383,47 +383,13 @@ QListWidget::item:hover {
     <property name="styleSheet">
      <string notr="true">background-color: #07090f;</string>
     </property>
-    <widget class="QLabel" name="mapPlaceholder">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>380</y>
-       <width>500</width>
-       <height>60</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: #3e4560;
-font-size: 18px;
-font-weight: 600;
-background: transparent;</string>
-     </property>
-     <property name="text">
-      <string>Здесь будет карта</string>
-     </property>
-    </widget>
-    <widget class="QWidget" name="routeInfoBar" native="true">
-     <property name="geometry">
-      <rect>
-       <x>540</x>
-       <y>14</y>
-       <width>600</width>
-       <height>40</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgba(7,9,15,0.85);
-border: 1px solid rgba(255,255,255,0.06);
-border-radius: 10px;</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="routeInfoLabel">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>20</x>
        <y>20</y>
        <width>400</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="styleSheet">

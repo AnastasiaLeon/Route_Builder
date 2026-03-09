@@ -42,8 +42,6 @@ public:
     QLabel *resultsLabel;
     QListWidget *resultsList;
     QWidget *rightPanel;
-    QLabel *mapPlaceholder;
-    QWidget *routeInfoBar;
     QLabel *routeInfoLabel;
     QMenuBar *menubar;
 
@@ -238,24 +236,11 @@ public:
 "}"));
         rightPanel = new QWidget(centralwidget);
         rightPanel->setObjectName("rightPanel");
-        rightPanel->setGeometry(QRect(520, 0, 960, 900));
+        rightPanel->setGeometry(QRect(510, 0, 960, 900));
         rightPanel->setStyleSheet(QString::fromUtf8("background-color: #07090f;"));
-        mapPlaceholder = new QLabel(rightPanel);
-        mapPlaceholder->setObjectName("mapPlaceholder");
-        mapPlaceholder->setGeometry(QRect(200, 380, 500, 60));
-        mapPlaceholder->setStyleSheet(QString::fromUtf8("color: #3e4560;\n"
-"font-size: 18px;\n"
-"font-weight: 600;\n"
-"background: transparent;"));
-        routeInfoBar = new QWidget(rightPanel);
-        routeInfoBar->setObjectName("routeInfoBar");
-        routeInfoBar->setGeometry(QRect(540, 14, 600, 40));
-        routeInfoBar->setStyleSheet(QString::fromUtf8("background-color: rgba(7,9,15,0.85);\n"
-"border: 1px solid rgba(255,255,255,0.06);\n"
-"border-radius: 10px;"));
         routeInfoLabel = new QLabel(rightPanel);
         routeInfoLabel->setObjectName("routeInfoLabel");
-        routeInfoLabel->setGeometry(QRect(550, 20, 400, 20));
+        routeInfoLabel->setGeometry(QRect(20, 20, 400, 22));
         routeInfoLabel->setStyleSheet(QString::fromUtf8("color: #dde3f0;\n"
 "font-size: 13px;\n"
 "font-weight: 700;\n"
@@ -288,7 +273,6 @@ public:
 "+ \321\201 \320\277\320\265\321\200\320\265\321\201\320\260\320\264\320\272\320\260\320\274\320\270", nullptr));
         searchBtn->setText(QCoreApplication::translate("MainWindow", "\320\235\320\260\320\271\321\202\320\270 \320\274\320\260\321\200\321\210\321\200\321\203\321\202\321\213 \342\206\222", nullptr));
         resultsLabel->setText(QCoreApplication::translate("MainWindow", "\320\240\320\225\320\227\320\243\320\233\320\254\320\242\320\220\320\242\320\253", nullptr));
-        mapPlaceholder->setText(QCoreApplication::translate("MainWindow", "\320\227\320\264\320\265\321\201\321\214 \320\261\321\203\320\264\320\265\321\202 \320\272\320\260\321\200\321\202\320\260", nullptr));
         routeInfoLabel->setText(QCoreApplication::translate("MainWindow", "\360\237\223\215 \320\236\321\202\320\272\321\203\320\264\320\260 \342\206\222 \320\232\321\203\320\264\320\260", nullptr));
     } // retranslateUi
 
