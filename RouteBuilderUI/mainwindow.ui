@@ -320,6 +320,57 @@ QPushButton:pressed {
      <string>Найти маршруты →</string>
     </property>
    </widget>
+   <widget class="QLabel" name="resultsLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>460</y>
+      <width>200</width>
+      <height>14</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #3e4560;
+font-size: 10px;
+font-weight: 700;
+background: transparent;</string>
+    </property>
+    <property name="text">
+     <string>РЕЗУЛЬТАТЫ</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="resultsList">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>478</y>
+      <width>460</width>
+      <height>340</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QListWidget {
+    background-color: #121620;
+    border: 1.5px solid #1e2438;
+    border-radius: 8px;
+    color: #dde3f0;
+    font-size: 13px;
+    padding: 4px;
+}
+QListWidget::item {
+    padding: 10px;
+    border-bottom: 1px solid #1e2438;
+    border-radius: 6px;
+}
+QListWidget::item:selected {
+    background-color: rgba(61,123,255,0.15);
+    border: 1px solid #3d7bff;
+}
+QListWidget::item:hover {
+    background-color: rgba(61,123,255,0.08);
+}</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

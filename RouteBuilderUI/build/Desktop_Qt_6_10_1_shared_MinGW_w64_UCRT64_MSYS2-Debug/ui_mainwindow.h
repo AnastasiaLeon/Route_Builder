@@ -14,6 +14,7 @@
 #include <QtWidgets/QDateEdit>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
@@ -38,6 +39,8 @@ public:
     QPushButton *directBtn;
     QPushButton *allRoutesBtn;
     QPushButton *searchBtn;
+    QLabel *resultsLabel;
+    QListWidget *resultsList;
     QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -199,6 +202,36 @@ public:
 "QPushButton:pressed {\n"
 "    background-color: #1e4ab0;\n"
 "}"));
+        resultsLabel = new QLabel(centralwidget);
+        resultsLabel->setObjectName("resultsLabel");
+        resultsLabel->setGeometry(QRect(20, 460, 200, 14));
+        resultsLabel->setStyleSheet(QString::fromUtf8("color: #3e4560;\n"
+"font-size: 10px;\n"
+"font-weight: 700;\n"
+"background: transparent;"));
+        resultsList = new QListWidget(centralwidget);
+        resultsList->setObjectName("resultsList");
+        resultsList->setGeometry(QRect(20, 478, 460, 340));
+        resultsList->setStyleSheet(QString::fromUtf8("QListWidget {\n"
+"    background-color: #121620;\n"
+"    border: 1.5px solid #1e2438;\n"
+"    border-radius: 8px;\n"
+"    color: #dde3f0;\n"
+"    font-size: 13px;\n"
+"    padding: 4px;\n"
+"}\n"
+"QListWidget::item {\n"
+"    padding: 10px;\n"
+"    border-bottom: 1px solid #1e2438;\n"
+"    border-radius: 6px;\n"
+"}\n"
+"QListWidget::item:selected {\n"
+"    background-color: rgba(61,123,255,0.15);\n"
+"    border: 1px solid #3d7bff;\n"
+"}\n"
+"QListWidget::item:hover {\n"
+"    background-color: rgba(61,123,255,0.08);\n"
+"}"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -226,6 +259,7 @@ public:
         allRoutesBtn->setText(QCoreApplication::translate("MainWindow", "\320\222\321\201\320\265 \320\274\320\260\321\200\321\210\321\200\321\203\321\202\321\213\n"
 "+ \321\201 \320\277\320\265\321\200\320\265\321\201\320\260\320\264\320\272\320\260\320\274\320\270", nullptr));
         searchBtn->setText(QCoreApplication::translate("MainWindow", "\320\235\320\260\320\271\321\202\320\270 \320\274\320\260\321\200\321\210\321\200\321\203\321\202\321\213 \342\206\222", nullptr));
+        resultsLabel->setText(QCoreApplication::translate("MainWindow", "\320\240\320\225\320\227\320\243\320\233\320\254\320\242\320\220\320\242\320\253", nullptr));
     } // retranslateUi
 
 };
