@@ -371,6 +371,19 @@ QListWidget::item:hover {
 }</string>
     </property>
    </widget>
+   <widget class="QWidget" name="rightPanel" native="true">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>0</y>
+      <width>960</width>
+      <height>900</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #07090f;</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -41,6 +41,7 @@ public:
     QPushButton *searchBtn;
     QLabel *resultsLabel;
     QListWidget *resultsList;
+    QWidget *rightPanel;
     QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -232,6 +233,10 @@ public:
 "QListWidget::item:hover {\n"
 "    background-color: rgba(61,123,255,0.08);\n"
 "}"));
+        rightPanel = new QWidget(centralwidget);
+        rightPanel->setObjectName("rightPanel");
+        rightPanel->setGeometry(QRect(520, 0, 960, 900));
+        rightPanel->setStyleSheet(QString::fromUtf8("background-color: #07090f;"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
