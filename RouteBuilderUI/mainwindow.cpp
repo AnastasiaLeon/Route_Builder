@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     showMaximized();
     menuBar()->hide();
 
-    // sidebar на всю высоту
+    // sidebar на всю высоту(для удобства)
     ui->sidePanel->setFixedWidth(500);
 }
 

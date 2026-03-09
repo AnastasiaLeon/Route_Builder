@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QWidget>
@@ -22,6 +23,7 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QWidget *sidePanel;
+    QLabel *logoLabel;
     QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -40,6 +42,13 @@ public:
         sidePanel->setGeometry(QRect(0, 0, 500, 900));
         sidePanel->setStyleSheet(QString::fromUtf8("background-color: #0d1018;\n"
 "border-right: 1px solid rgba(255,255,255,0.06);"));
+        logoLabel = new QLabel(centralwidget);
+        logoLabel->setObjectName("logoLabel");
+        logoLabel->setGeometry(QRect(20, 18, 280, 30));
+        logoLabel->setStyleSheet(QString::fromUtf8("color: #3d7bff;\n"
+"font-size: 18px;\n"
+"font-weight: 800;\n"
+"background: transparent;"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -54,6 +63,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+        logoLabel->setText(QCoreApplication::translate("MainWindow", "\360\237\227\272 RouteBuilder", nullptr));
     } // retranslateUi
 
 };

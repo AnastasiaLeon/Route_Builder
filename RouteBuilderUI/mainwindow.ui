@@ -34,6 +34,25 @@
 border-right: 1px solid rgba(255,255,255,0.06);</string>
     </property>
    </widget>
+   <widget class="QLabel" name="logoLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>18</y>
+      <width>280</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #3d7bff;
+font-size: 18px;
+font-weight: 800;
+background: transparent;</string>
+    </property>
+    <property name="text">
+     <string>🗺 RouteBuilder</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
