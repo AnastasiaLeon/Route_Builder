@@ -383,6 +383,25 @@ QListWidget::item:hover {
     <property name="styleSheet">
      <string notr="true">background-color: #07090f;</string>
     </property>
+    <widget class="QLabel" name="mapPlaceholder">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>380</y>
+       <width>500</width>
+       <height>60</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #3e4560;
+font-size: 18px;
+font-weight: 600;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Здесь будет карта</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
