@@ -10,9 +10,9 @@ std::optional<nlohmann::json> CacheManager::getFromCache(const std::string& key)
     if (memoryCache.find(key) != memoryCache.end()) {
         CacheEntry& entry = memoryCache[key];
         if (isCacheEntryValid(entry)) {
-            return entry.data;  // Если данные актуальны -> возвращаем их
+            return entry.data;  // если данные актуальны -> возвращаем их
         } else {
-            memoryCache.erase(key);  // Если неактуальны -> удаляем
+            memoryCache.erase(key);  // если неактуальны -> удаляем
         }
     }
     return std::nullopt;
@@ -21,13 +21,12 @@ std::optional<nlohmann::json> CacheManager::getFromCache(const std::string& key)
 void CacheManager::setToCache(const std::string& key, const nlohmann::json& value) {
     CacheEntry entry;
     entry.data = value;
-    entry.timestamp = std::chrono::system_clock::now();  // Текущее время
-    memoryCache[key] = entry;  // Сохраняем данные в кэше
-    saveToFile();  // Сохраняем кэш в файл
+    entry.timestamp = std::chrono::system_clock::now();  // текущее время
+    memoryCache[key] = entry;  // сохраняем данные в кэше
+    saveToFile();  // сохраняем кэш в файл
 }
 
 void CacheManager::saveToFile() {
-    // RAII: ofstream закрывается в деструкторе при выходе из области видимости
     std::ofstream file(cacheFile);
     if (file) {
         nlohmann::json cacheJson;
@@ -37,7 +36,7 @@ void CacheManager::saveToFile() {
             entryJson["timestamp"] = std::chrono::system_clock::to_time_t(entry.timestamp);
             cacheJson[key] = entryJson;
         }
-        file << cacheJson.dump(4);  // Сохранение кэша в формате json
+        file << cacheJson.dump(4);
     } else {
         std::cerr << "Ошибка: Не удалось открыть файл для записи кэша." << std::endl;
         throw CacheException("Не удалось открыть файл для записи кэша: " + cacheFile);
@@ -45,7 +44,6 @@ void CacheManager::saveToFile() {
 }
 
 void CacheManager::loadFromFile() {
-    // RAII: ifstream закрывается в деструкторе при выходе из области видимости
     std::ifstream file(cacheFile);
     if (file) {
         nlohmann::json cacheJson;
@@ -62,25 +60,25 @@ void CacheManager::loadFromFile() {
             throw CacheException("Ошибка при загрузке кэша: " + std::string(error.what()));
         }
     } else {
-        // Отсутствие файла кэша не считается ошибкой — он будет создан при первой записи
+        // отсутствие файла кэша - не ршибка и он будет создан при первой записи
     }
 }
 
 void CacheManager::clearCache() {
-    memoryCache.clear();  // Очищение кэша в памяти
-    saveToFile();  // Сохранение изменения в файле
+    memoryCache.clear();
+    saveToFile();
 }
 
 void CacheManager::removeOldEntries() {
     auto now = std::chrono::system_clock::now();
     for (auto i = memoryCache.begin(); i != memoryCache.end(); ) {
         if (!isCacheEntryValid(i->second)) {
-            i = memoryCache.erase(i);  // Удаление неактуальных записей
+            i = memoryCache.erase(i);
         } else {
             i++;
         }
     }
-    saveToFile();  // Сохранение изменений в файле
+    saveToFile();
 }
 
 bool CacheManager::isCacheEntryValid(const CacheEntry& entry) const {

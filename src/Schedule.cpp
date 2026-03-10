@@ -8,13 +8,13 @@
 
 namespace {
 
-constexpr const char* COLOR_RESET   = "\033[0m";
-constexpr const char* COLOR_GREEN   = "\033[32m";
-constexpr const char* COLOR_YELLOW  = "\033[33m";
-constexpr const char* COLOR_BLUE    = "\033[34m";
-constexpr const char* COLOR_CYAN    = "\033[36m";
-constexpr const char* TEXT_ITALIC   = "\033[3m";
-constexpr const char* TEXT_BOLD     = "\033[1m";
+constexpr const char* COLOR_RESET = "\033[0m";
+constexpr const char* COLOR_GREEN = "\033[32m";
+constexpr const char* COLOR_YELLOW = "\033[33m";
+constexpr const char* COLOR_BLUE = "\033[34m";
+constexpr const char* COLOR_CYAN = "\033[36m";
+constexpr const char* TEXT_ITALIC = "\033[3m";
+constexpr const char* TEXT_BOLD = "\033[1m";
 constexpr int MINUTES_PER_HOUR = 60;
 constexpr int SECONDS_PER_MINUTE = 60;
 
@@ -50,13 +50,16 @@ MaybePrice getMaybePrice(const nlohmann::json& segment) {
             }
         }
     } catch (const std::exception&) {
-        //Игнорируем ошибки парсинга цены
+        // игнорируем ошибки парсинга цены
     }
     return std::monostate{};
 }
 
 struct PriceToStringVisitor {
-    std::string operator()(std::monostate) const { return ""; }
+    std::string operator()(std::monostate) const { 
+        return ""; 
+    }
+
     std::string operator()(const PriceInfo& p) const {
         std::ostringstream oss;
         oss << p.whole;
@@ -139,7 +142,6 @@ std::string Schedule::formatTime(const std::string& time) {
     if (tPos != std::string::npos) {
         formattedTime.replace(tPos, 1, " ");
     }
-    // Удаляем информацию о временной зоне (+03:00 / -05:00 и т.п.)
     size_t searchStart = (tPos != std::string::npos) ? tPos : 0;
     size_t tzPos = formattedTime.find_first_of("+-", searchStart);
     if (tzPos != std::string::npos) {
@@ -193,11 +195,11 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
 
             bool hasTransfers = segment.value("has_transfers", false);
 
-            if (!showTransfers && hasTransfers) { // Если в запросе только прямые маршруты то маршруты с пересадками пропускаются
+            if (!showTransfers && hasTransfers) {
                 continue;
             }
 
-            if (!hasTransfers) { // Прямой маршрут
+            if (!hasTransfers) {
                 std::string transport = "Неизвестно";
                 if (segment.contains("thread")) {
                     auto thread = segment["thread"];
@@ -223,7 +225,7 @@ void Schedule::printSchedule(const nlohmann::json& schedule, bool showTransfers)
                 }
                 std::cout << "\n";
                 std::cout << TEXT_ITALIC << "   🚩 Место отправления: " << COLOR_RESET << fromTitle << TEXT_ITALIC << " | 🏁 Место прибытия: " << COLOR_RESET << toTitle << "\n";
-            } else { // С пересадкой
+            } else {
                 std::string departure = segment.value("departure", "");
                 std::string arrival = segment.value("arrival", "");
                 std::string fromTitle = segment.value("departure_from", nlohmann::json::object()).value("title", "");

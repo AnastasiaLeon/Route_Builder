@@ -5,7 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 
-// cпециализированные типы исключений для работы с API
+// cпециализированные типы исключений
 class NetworkException : public std::runtime_error {
 public:
     explicit NetworkException(const std::string& message) : std::runtime_error(message) {}
