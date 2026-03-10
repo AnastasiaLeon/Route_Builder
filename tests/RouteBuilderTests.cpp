@@ -11,7 +11,7 @@
 
 TEST(ScheduleTests, CalculateDurationSimple) {
     std::string from = "2026-04-01T10:00:00";
-    std::string to   = "2026-04-01T11:30:00";
+    std::string to = "2026-04-01T11:30:00";
 
     int minutes = Schedule::calculateDuration(from, to);
     EXPECT_EQ(minutes, 90);
@@ -19,7 +19,7 @@ TEST(ScheduleTests, CalculateDurationSimple) {
 
 TEST(ScheduleTests, CalculateDurationZero) {
     std::string from = "2026-04-01T10:00:00";
-    std::string to   = "2026-04-01T10:00:00";
+    std::string to = "2026-04-01T10:00:00";
 
     int minutes = Schedule::calculateDuration(from, to);
     EXPECT_EQ(minutes, 0);
@@ -27,7 +27,7 @@ TEST(ScheduleTests, CalculateDurationZero) {
 
 TEST(ScheduleTests, CalculateDurationLong) {
     std::string from = "2026-04-01T08:00:00";
-    std::string to   = "2026-04-02T08:00:00";
+    std::string to = "2026-04-02T08:00:00";
 
     int minutes = Schedule::calculateDuration(from, to);
     EXPECT_EQ(minutes, 1440);
@@ -84,11 +84,11 @@ TEST(ScheduleTests, PrintScheduleDirectRoute) {
     segment["has_transfers"] = false;
     segment["transfers_count"] = 0;
     segment["departure"] = "2026-04-01T10:00:00";
-    segment["arrival"]   = "2026-04-01T12:00:00";
-    segment["duration"]  = 7200;
-    segment["from"]      = {{"title", "Москва"}};
-    segment["to"]        = {{"title", "Санкт-Петербург"}};
-    segment["thread"]    = {{"transport_type", "train"}};
+    segment["arrival"] = "2026-04-01T12:00:00";
+    segment["duration"] = 7200;
+    segment["from"] = {{"title", "Москва"}};
+    segment["to"] = {{"title", "Санкт-Петербург"}};
+    segment["thread"] = {{"transport_type", "train"}};
 
     nlohmann::json json;
     json["segments"] = nlohmann::json::array({segment});
@@ -101,9 +101,9 @@ TEST(ScheduleTests, PrintScheduleTransferRouteSkippedWhenNotRequested) {
     segment["has_transfers"] = true;
     segment["transfers_count"] = 1;
     segment["departure"] = "2026-04-01T10:00:00";
-    segment["arrival"]   = "2026-04-01T18:00:00";
+    segment["arrival"] = "2026-04-01T18:00:00";
     segment["departure_from"] = {{"title", "Москва"}};
-    segment["arrival_to"]     = {{"title", "Казань"}};
+    segment["arrival_to"]= {{"title", "Казань"}};
 
     nlohmann::json json;
     json["segments"] = nlohmann::json::array({segment});
@@ -116,7 +116,7 @@ TEST(ScheduleTests, PrintScheduleMoreThanOneTransferSkipped) {
     segment["has_transfers"] = true;
     segment["transfers_count"] = 2;
     segment["departure"] = "2026-04-01T10:00:00";
-    segment["arrival"]   = "2026-04-01T22:00:00";
+    segment["arrival"] = "2026-04-01T22:00:00";
 
     nlohmann::json json;
     json["segments"] = nlohmann::json::array({segment});
@@ -253,11 +253,11 @@ TEST(MockScheduleAPITests, PrintScheduleWithMockData) {
     segment["has_transfers"] = false;
     segment["transfers_count"] = 0;
     segment["departure"] = "2026-06-01T09:00:00";
-    segment["arrival"]   = "2026-06-01T11:00:00";
-    segment["duration"]  = 7200;
-    segment["from"]      = {{"title", "Екатеринбург"}};
-    segment["to"]        = {{"title", "Тюмень"}};
-    segment["thread"]    = {{"transport_type", "bus"}};
+    segment["arrival"] = "2026-06-01T11:00:00";
+    segment["duration"] = 7200;
+    segment["from"] = {{"title", "Екатеринбург"}};
+    segment["to"] = {{"title", "Тюмень"}};
+    segment["thread"] = {{"transport_type", "bus"}};
 
     nlohmann::json mockData;
     mockData["segments"] = nlohmann::json::array({segment});

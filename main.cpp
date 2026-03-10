@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     std::getline(std::cin, fromCity);
     std::cout << "Город прибытия: ";
     std::getline(std::cin, toCity);
-    std::cout << "Дата (например 2025-12-01): ";
+    std::cout << "Дата (в формате 2026-03-14): ";
     std::getline(std::cin, date);
 
     std::cout << "Выберите тип маршрутов:\n";
@@ -35,11 +35,9 @@ int main(int argc, char* argv[]) {
 
     bool showTransfers = (choice == 2);
 
-    //RAII: единственный владелец кэша — освобождение при выходе из main
     auto cache = std::make_unique<CacheManager>("scheduleCache.json");
     cache->removeOldEntries();
 
-    //RAII: разделяемый владелец API — можно передавать в другие компоненты при необходимости
     std::shared_ptr<IScheduleAPI> api = std::make_shared<YandexScheduleAPI>(APIKey);
 
     try {
