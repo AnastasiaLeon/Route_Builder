@@ -15,8 +15,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void onSearchClicked();
+
 private:
     Ui::MainWindow *ui;
+    bool m_showTransfers = false;
     void setDirectActive(bool directActive);
 };
 

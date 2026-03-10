@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    backend/BackendRunner.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    backend/BackendRunner.h
 
 FORMS += \
     mainwindow.ui

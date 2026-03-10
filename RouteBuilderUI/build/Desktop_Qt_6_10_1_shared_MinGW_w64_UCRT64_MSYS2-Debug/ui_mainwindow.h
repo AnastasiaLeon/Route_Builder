@@ -133,7 +133,7 @@ public:
         dateInfoLabel->setStyleSheet(QString::fromUtf8("color: #7c859e; font-size: 13px; font-weight: 700; background: transparent;"));
         mapPlaceholder = new QLabel(rightPanel);
         mapPlaceholder->setObjectName("mapPlaceholder");
-        mapPlaceholder->setGeometry(QRect(280, 380, 300, 30));
+        mapPlaceholder->setGeometry(QRect(-10, 50, 960, 550));
         mapPlaceholder->setStyleSheet(QString::fromUtf8("color: #3e4560; font-size: 18px; font-weight: 600; background: transparent;"));
         distLabel = new QLabel(rightPanel);
         distLabel->setObjectName("distLabel");
