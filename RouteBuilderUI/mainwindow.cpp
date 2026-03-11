@@ -1,37 +1,80 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "backend/BackendRunner.h"
-
 #include <QApplication>
 #include <QDate>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QPixmap>
+#include <QDir>
+#include <QFileInfo>
+#include <memory>
+#include <optional>
+#include <variant>
+#include <QCoreApplication>
 
 namespace {
 
-QString stripAnsiSequences(const QString &text)
-{
-    static const QRegularExpression ansiPattern(
-        QStringLiteral(u"\x1B\\[[0-9;]*[A-Za-z]"));
+QString stripAnsiSequences(const QString &text) {
+    static const QRegularExpression ansiPattern(QStringLiteral(u"\x1B\\[[0-9;]*[A-Za-z]"));
     return QString(text).remove(ansiPattern);
 }
 
-} // namespace
+using RouteCountValue = std::variant<int, QString>;
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+QString routeCountToText(const RouteCountValue &value) {
+    return std::visit(
+        [](auto &&val) -> QString {
+        using T = std::decay_t<decltype(val)>;
+        if constexpr (std::is_same_v<T, int>) {
+            return QString::number(val);
+        } else {
+            return val;
+        }
+    },
+    value);
+}
+
+// Класс-обёртка над QListWidgetItem, демонстрирующий наследование
+class RouteListItem : public QListWidgetItem
 {
+public:
+    using QListWidgetItem::QListWidgetItem;
+};
+
+}
+
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
-    QPixmap map("map.jpg");
-    ui->mapPlaceholder->setPixmap(map.scaled(
-        ui->mapPlaceholder->size(),
-        Qt::KeepAspectRatioByExpanding,
-        Qt::SmoothTransformation
-    ));
-    ui->mapPlaceholder->setScaledContents(true);
+    // загружаем карту в exe
+    QPixmap resMap(QStringLiteral(":/images/map.jpg"));
+    if (!resMap.isNull()) {
+        ui->mapPlaceholder->setPixmap(resMap);
+        ui->mapPlaceholder->setScaledContents(true);
+    }
+    const QString appDir = QCoreApplication::applicationDirPath();
+    QStringList candidates;
+    candidates << QDir(appDir).filePath(QStringLiteral("map.jpg"));
+
+    QDir dir(appDir);
+    for (int i = 0; i < 5; i++) {
+        candidates << dir.filePath(QStringLiteral("map.jpg"));
+        if (!dir.cdUp()) {
+            break;
+        }
+    }
+
+    for (const QString &path : candidates) {
+        if (QFileInfo::exists(path)) {
+            QPixmap map(path);
+            if (!map.isNull()) {
+                ui->mapPlaceholder->setPixmap(map);
+                ui->mapPlaceholder->setScaledContents(true);
+            }
+            break;
+        }
+    }
     setWindowTitle("Route Builder");
     showMaximized();
     menuBar()->hide();
@@ -53,8 +96,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->searchBtn, &QPushButton::clicked, this, &MainWindow::onSearchClicked);
 }
 
-void MainWindow::setDirectActive(bool directActive)
-{
+void MainWindow::setDirectActive(bool directActive) {
     m_showTransfers = !directActive;
 
     if (directActive) {
@@ -82,29 +124,19 @@ void MainWindow::setDirectActive(bool directActive)
     }
 }
 
-void MainWindow::onSearchClicked()
-{
+void MainWindow::onSearchClicked() {
     const QString from = ui->fromInput->text().trimmed();
     const QString to = ui->toInput->text().trimmed();
 
     if (from.isEmpty() || to.isEmpty()) {
-        QMessageBox::warning(this, tr("Недостаточно данных"),
-                             tr("Пожалуйста, заполните поля 'Откуда' и 'Куда'."));
+        QMessageBox::warning(this, tr("Недостаточно данных"), tr("Пожалуйста, заполните поля 'Откуда' и 'Куда'."));
         return;
     }
 
     const QDate date = ui->dateEdit->date();
     const QString dateIso = date.toString("yyyy-MM-dd");
-
     bool ok = false;
-    const QString apiKey = QInputDialog::getText(
-        this,
-        tr("API ключ"),
-        tr("Введите API-ключ Яндекс Расписаний:"),
-        QLineEdit::Normal,
-        QString(),
-        &ok
-    );
+    const QString apiKey = QInputDialog::getText(this, tr("API ключ"), tr("Введите API-ключ Яндекс Расписаний:"), QLineEdit::Normal, QString(), &ok);
 
     if (!ok || apiKey.trimmed().isEmpty()) {
         return;
@@ -114,35 +146,28 @@ void MainWindow::onSearchClicked()
     ui->searchBtn->setText(tr("Поиск..."));
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    const BackendRunner::Result result =
-        BackendRunner::runRouteBuilder(apiKey.trimmed(), from, to, dateIso, m_showTransfers);
+    std::optional<BackendRunner::Result> resultOpt = std::make_optional(BackendRunner::runRouteBuilder(apiKey.trimmed(), from, to, dateIso, m_showTransfers));
+    const BackendRunner::Result &result = *resultOpt;
 
     QApplication::restoreOverrideCursor();
     ui->searchBtn->setEnabled(true);
     ui->searchBtn->setText(tr("Найти маршруты →"));
 
     if (!result.started) {
-        QMessageBox::critical(this, tr("Ошибка запуска"),
-                              result.errorString.isEmpty()
-                                  ? tr("Не удалось запустить консольный бекенд.")
-                                  : result.errorString);
+        QMessageBox::critical(this, tr("Ошибка запуска"), result.errorString.isEmpty() ? tr("Не удалось запустить консольный бекенд."): result.errorString);
         return;
     }
 
     if (!result.stdErr.isEmpty()) {
-        // Покажем ошибки, которые вернул бекенд
-        QMessageBox::warning(this, tr("Предупреждение от бекенда"),
-                             result.stdErr);
+        // ошибки, которые вернул бекенд
+        QMessageBox::warning(this, tr("Предупреждение от бекенда"), result.stdErr);
     }
 
     ui->resultsList->clear();
-    const QStringList rawLines = result.stdOut.split(QLatin1Char('\n'),
-                                                     Qt::SkipEmptyParts);
-
+    const QStringList rawLines = result.stdOut.split(QLatin1Char('\n'), Qt::SkipEmptyParts);
     int totalRoutes = -1;
     int directRoutes = -1;
     int transferRoutes = -1;
-
     QStringList lines;
     lines.reserve(rawLines.size());
     for (const QString &rawLine : rawLines) {
@@ -152,10 +177,10 @@ void MainWindow::onSearchClicked()
         }
     }
 
-    for (int i = 0; i < lines.size(); ++i) {
+    for (int i = 0; i < lines.size(); i++) {
         const QString &line = lines[i];
 
-        // Парсим строки статистики, которые печатает бекенд
+        // парсим строки статистики, которые печатает бекенд
         if (line.contains(QStringLiteral("Всего маршрутов:"))) {
             bool ok = false;
             const int value = line.section(QLatin1Char(':'), -1).trimmed().toInt(&ok);
@@ -190,51 +215,42 @@ void MainWindow::onSearchClicked()
             continue;
         }
 
-        // Статистика и прочий текст, не являющийся описанием маршрута, пропускается.
+        // проверка на правильность
         if (line.startsWith(QStringLiteral("📊")) || line.startsWith(QStringLiteral("Введите 1")))
             continue;
 
-        // Собираем краткое описание маршрута из нескольких строк подряд.
-        if (line.startsWith(QStringLiteral("⬆️"))  // Прямой маршрут
-            || line.startsWith(QStringLiteral("🔄"))) { // Маршрут с пересадкой
-
+        // сбор результатов
+        if (line.startsWith(QStringLiteral("⬆️")) || line.startsWith(QStringLiteral("🔄"))) { 
             QString summary = line;
 
             int j = i + 1;
             while (j < lines.size()) {
                 const QString &next = lines[j];
 
-                // Останов: начинается новый маршрут или новый блок статистики
-                if (next.startsWith(QStringLiteral("⬆️"))
-                    || next.startsWith(QStringLiteral("🔄"))
-                    || next.startsWith(QStringLiteral("📊"))) {
+                if (next.startsWith(QStringLiteral("⬆️")) || next.startsWith(QStringLiteral("🔄")) || next.startsWith(QStringLiteral("📊"))) {
                     break;
                 }
-
-                // Берём только ключевые строки маршрута:
-                // время отправления/прибытия/длительность и места отправления/прибытия.
-                if (next.contains(QStringLiteral("Отправление:"))
-                    || next.contains(QStringLiteral("Место отправления:"))) {
+                if (next.contains(QStringLiteral("Отправление:")) || next.contains(QStringLiteral("Место отправления:")) || next.contains(QStringLiteral("Место пересадки:"))) {
                     summary += QStringLiteral("  ") + next;
                 }
 
                 ++j;
             }
 
-            ui->resultsList->addItem(summary);
+            auto summaryPtr = std::make_unique<QString>(summary);
+            std::shared_ptr<QString> sharedSummary(std::move(summaryPtr));
+            auto *item = new RouteListItem(*sharedSummary);
+            ui->resultsList->addItem(item);
             i = j - 1;
         }
     }
 
-    // Обновим краткую информацию справа
+    // обновление краткой информации справа
     if (!from.isEmpty() && !to.isEmpty()) {
-        ui->routeInfoLabel->setText(
-            QStringLiteral("📍 %1 → %2").arg(from, to));
-        ui->distLabel->setText(
-            QStringLiteral("Маршрут\n%1 → %2").arg(from, to));
+        ui->routeInfoLabel->setText(QStringLiteral("📍 %1 → %2").arg(from, to));
+        ui->distLabel->setText(QStringLiteral("Маршрут\n%1 → %2").arg(from, to));
     }
-    ui->dateInfoLabel->setText(
-        QStringLiteral("📅 %1").arg(date.toString("dd.MM.yyyy")));
+    ui->dateInfoLabel->setText(QStringLiteral("📅 %1").arg(date.toString("dd.MM.yyyy")));
 
     if (totalRoutes < 0) {
         totalRoutes = ui->resultsList->count();
@@ -246,18 +262,22 @@ void MainWindow::onSearchClicked()
         transferRoutes = 0;
     }
 
-    ui->foundLabel->setText(
-        QStringLiteral("Найдено\n%1").arg(totalRoutes));
+    RouteCountValue totalValue = totalRoutes;
+    RouteCountValue directValue = (directRoutes >= 0) ? RouteCountValue{directRoutes} : RouteCountValue{QStringLiteral("0")};
+    RouteCountValue transferValue = (transferRoutes >= 0) ? RouteCountValue{transferRoutes} : RouteCountValue{QStringLiteral("0")};
 
-    ui->directCountLabel->setText(
-        QStringLiteral("Прямых\n%1").arg(directRoutes >= 0 ? directRoutes : 0));
+    const QString totalText = routeCountToText(totalValue);
+    const QString directText = routeCountToText(directValue);
+    const QString transferText = routeCountToText(transferValue);
 
-    ui->transferCountLabel->setText(
-        QStringLiteral("С пересадками\n%1").arg(transferRoutes >= 0 ? transferRoutes : 0));
+    ui->foundLabel->setText(QStringLiteral("Найдено\n%1").arg(totalText));
+
+    ui->directCountLabel->setText(QStringLiteral("Прямых\n%1").arg(directText));
+
+    ui->transferCountLabel->setText(QStringLiteral("С пересадками\n%1").arg(transferText));
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
     delete ui;
 }
 
