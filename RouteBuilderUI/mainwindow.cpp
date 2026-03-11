@@ -36,6 +36,13 @@ QString routeCountToText(const RouteCountValue &value) {
     value);
 }
 
+// Класс-обёртка над QListWidgetItem, демонстрирующий наследование
+class RouteListItem : public QListWidgetItem
+{
+public:
+    using QListWidgetItem::QListWidgetItem;
+};
+
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
@@ -232,7 +239,8 @@ void MainWindow::onSearchClicked() {
 
             auto summaryPtr = std::make_unique<QString>(summary);
             std::shared_ptr<QString> sharedSummary(std::move(summaryPtr));
-            ui->resultsList->addItem(*sharedSummary);
+            auto *item = new RouteListItem(*sharedSummary);
+            ui->resultsList->addItem(item);
             i = j - 1;
         }
     }

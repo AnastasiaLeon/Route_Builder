@@ -13,6 +13,13 @@ namespace {
 
 constexpr int BACKEND_SEARCH_DEPTH = 5;
 
+// Простое наследование от QProcess для демонстрации использования наследования.
+// Здесь обходимся без Q_OBJECT, чтобы не требовать генерации moc-кода.
+class BackendProcess : public QProcess {
+public:
+    using QProcess::QProcess;
+};
+
 struct BackendCache {
     QString path;
 };
@@ -114,7 +121,7 @@ BackendRunner::Result BackendRunner::runRouteBuilder(const QString &apiKey,
         return result;
     }
 
-    QProcess process;
+    BackendProcess process;
     process.setProgram(programPath);
 
     process.start();
