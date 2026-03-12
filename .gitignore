@@ -39,3 +39,37 @@
 
 # debug information files
 *.dwo
+
+# CMake, build output 
+build/
+build-*/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+install_manifest.txt
+
+# Qt, qmake, QtCreator
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.autosave
+
+*.moc
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# Qt Creator helpers
+.qtc_clangd/
+.qmldir.user
+
+# IDEs 
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS 
+.DS_Store
