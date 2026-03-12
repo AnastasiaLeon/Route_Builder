@@ -1,4 +1,3 @@
-```cpp
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "backend/BackendRunner.h"
@@ -206,4 +205,3 @@ void MainWindow::onSearchClicked() {
 MainWindow::~MainWindow() {
     delete ui;
 }
-```

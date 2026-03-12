@@ -1,4 +1,3 @@
-```cpp
 #ifndef BACKENDRUNNER_H
 #define BACKENDRUNNER_H
 #include <QString>
@@ -18,4 +17,3 @@ public:
 };
 
 #endif
-```
