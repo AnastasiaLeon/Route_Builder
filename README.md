@@ -89,7 +89,7 @@
 
 # Information in English (absolutely the same):
 
-Route planner for searching trips between two cities via the Yandex Timetables API, with result caching and a Qt graphical interface.
+Route builder for searching trips between two cities via the YandexSchedule API, with result caching and a Qt graphical interface.
 
 The project consists of two parts — two possible ways to get the result:
 
@@ -97,7 +97,7 @@ The project consists of two parts — two possible ways to get the result:
 - **GUI client** — a Qt application with a MainWindow window that uses the same backend as the console application to work with the API and the cache.
 
 ## Features
-- **Route search** by cities and date via Yandex Timetables.
+- **Route search** by cities and date via Yandex Schedule
 - **Error handling**: separate exception types for network errors, API errors, JSON parsing, invalid cities, cache errors, and time errors.
 - **Caching**:
   - In-memory cache + saving to disk in `scheduleCache.json`.
@@ -114,7 +114,7 @@ The project consists of two parts — two possible ways to get the result:
 - `include/`
   - `YandexScheduleAPI.h` — the `IScheduleAPI` virtual class, derived classes `YandexScheduleAPI`, `MockScheduleAPI` (for tests), and also some exceptions.
   - `Schedule.h` — the `Schedule` class for printing routes + calculating duration and converting the time format.
-  - `CacheManager.h` — the `CacheManager` class for caching received responses so that Yandex Timetables is not requested again within 24 hours.
+  - `CacheManager.h` — the `CacheManager` class for caching received responses so that Yandex Schedule is not requested again within 24 hours.
 - `src/` — implementations of classes from 'include/'.
 - `main.cpp` — console application.
 - `tests/RouteBuilderTests.cpp` — unit tests for the backend.
@@ -130,7 +130,7 @@ Main dependencies:
 - **C++23** or newer.
 - **CMake** for building the main part and tests.
 - **nlohmann/json** — for working with JSON.
-- **cpr** — an HTTP client on top of libcurl (for requests to Yandex Timetables).
+- **cpr** — an HTTP client on top of libcurl (for requests to Yandex Schedule).
 - **GoogleTest** — unit tests.
 - **Qt 6** (Widgets) — for the graphical interface.
 

@@ -35,10 +35,11 @@ int main(int argc, char* argv[]) {
 
     bool showTransfers = (choice == 2);
 
+    // инициализация кэша + удаление устаревших записей
     auto cache = std::make_unique<CacheManager>("scheduleCache.json");
     cache->removeOldEntries();
 
-    std::shared_ptr<IScheduleAPI> api = std::make_shared<YandexScheduleAPI>(APIKey);
+    std::shared_ptr<IScheduleAPI> api = std::make_shared<YandexScheduleAPI>(APIKey); // создание экземпляра api для работы с янд.sch
 
     try {
         std::string from;
@@ -59,7 +60,8 @@ int main(int argc, char* argv[]) {
             std::cout << "Данные полученные из Яндекс Расписания:\n";
             Schedule::printSchedule(schedule, showTransfers);
         }
-    } catch (const CityNotFoundException& e) {
+    } // обработка исключений
+    catch (const CityNotFoundException& e) {
         std::cerr << "Ошибка: " << e.what() << std::endl;
         return 1;
     } catch (const NetworkException& e) {
