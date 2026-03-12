@@ -31,6 +31,7 @@ public:
     virtual ~IScheduleAPI() = default;
 
     virtual std::string getCityCode(const std::string& cityName) = 0;
+
     virtual nlohmann::json getSchedule(const std::string& from, const std::string& to, const std::string& date) = 0;
 };
 
@@ -40,12 +41,17 @@ private:
 
 public:
     YandexScheduleAPI(const std::string& key);
+
     std::string getCityCode(const std::string& cityName) override;
+
     nlohmann::json getSchedule(const std::string& from, const std::string& to, const std::string& date) override;
 };
 
 // реализация для тестов возвращающая заранее подготовленные данные
 class MockScheduleAPI : public IScheduleAPI {
+private:
+    nlohmann::json mockSchedule;
+    
 public:
     explicit MockScheduleAPI(const nlohmann::json& mockData) : mockSchedule(mockData) {}
 
@@ -59,9 +65,6 @@ public:
         (void)date;
         return mockSchedule;
     }
-
-private:
-    nlohmann::json mockSchedule;
 };
 
 #endif

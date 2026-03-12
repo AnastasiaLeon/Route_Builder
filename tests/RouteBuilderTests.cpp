@@ -124,6 +124,14 @@ TEST(ScheduleTests, PrintScheduleMoreThanOneTransferSkipped) {
     EXPECT_NO_THROW(Schedule::printSchedule(json, true));
 }
 
+TEST(ScheduleTests, CalculateDurationPartialHour) {
+    std::string from = "2026-04-01T10:00:00";
+    std::string to = "2026-04-01T10:45:00";
+
+    int minutes = Schedule::calculateDuration(from, to);
+    EXPECT_EQ(minutes, 45);
+}
+
 // CacheManagerTests
 
 TEST(CacheManagerTests, SaveAndLoadCacheFromFile) {
@@ -212,6 +220,26 @@ TEST(CacheManagerTests, RemoveOldEntriesKeepsValidEntries) {
     std::remove(cacheFile.c_str());
 }
 
+TEST(CacheManagerTests, CacheStoresNestedJson) {
+    const std::string cacheFile = "test_cache_nested.json";
+    CacheManager cache(cacheFile);
+
+    nlohmann::json nested;
+    nested["segments"] = nlohmann::json::array({
+        nlohmann::json::object({{"from", "Москва"}, {"to", "СПб"}, {"duration", 240}})
+    });
+    nested["search"] = {{"date", "2026-05-01"}};
+    cache.setToCache("nested_route", nested);
+
+    auto loaded = cache.getFromCache("nested_route");
+    ASSERT_TRUE(loaded.has_value());
+    EXPECT_EQ((*loaded)["segments"].size(), 1u);
+    EXPECT_EQ((*loaded)["segments"][0]["from"], "Москва");
+    EXPECT_EQ((*loaded)["search"]["date"], "2026-05-01");
+
+    std::remove(cacheFile.c_str());
+}
+
 // MockScheduleAPITests
 
 TEST(MockScheduleAPITests, ReturnsProvidedSchedule) {
@@ -266,4 +294,21 @@ TEST(MockScheduleAPITests, PrintScheduleWithMockData) {
     auto schedule = api.getSchedule("from", "to", "2026-06-01");
 
     EXPECT_NO_THROW(Schedule::printSchedule(schedule, false));
+}
+
+TEST(MockScheduleAPITests, GetScheduleReturnsSameDataForAnyArguments) {
+    nlohmann::json mockData;
+    mockData["segments"] = nlohmann::json::array({
+        nlohmann::json::object({{"has_transfers", false}, {"transfers_count", 0}})
+    });
+    mockData["request_id"] = "test-123";
+
+    MockScheduleAPI api(mockData);
+
+    auto a = api.getSchedule("Москва", "Санкт-Петербург", "2026-01-15");
+    auto b = api.getSchedule("Казань", "Сочи", "2099-12-31");
+
+    EXPECT_EQ(a["request_id"], "test-123");
+    EXPECT_EQ(b["request_id"], "test-123");
+    EXPECT_EQ(a.dump(), b.dump());
 }

@@ -23,15 +23,22 @@ private:
     std::unordered_map<std::string, CacheEntry> memoryCache;  // кэш в памяти
     std::string cacheFile;  // файл для кэша на диске
     static constexpr int CACHE_VALIDITY_HOURS = 24;  // данные актуальны 24 часа
+    
     bool isCacheEntryValid(const CacheEntry& entry) const;
 
 public:
     CacheManager(const std::string& file);
+
     std::optional<nlohmann::json> getFromCache(const std::string& key);
+
     void setToCache(const std::string& key, const nlohmann::json& value);  // сохранить данные в кэше
+
     void saveToFile();
+
     void loadFromFile();
+
     void clearCache();
+
     void removeOldEntries();
 };
 
