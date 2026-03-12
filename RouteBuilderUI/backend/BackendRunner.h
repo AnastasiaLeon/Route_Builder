@@ -1,7 +1,9 @@
+```cpp
 #ifndef BACKENDRUNNER_H
 #define BACKENDRUNNER_H
 #include <QString>
 
+//запускает консольный бэкенд и возвращает результат
 class BackendRunner {
 public:
     struct Result {
@@ -16,4 +18,4 @@ public:
 };
 
 #endif
-
+```
